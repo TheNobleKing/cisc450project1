@@ -39,7 +39,7 @@ char getFileName(int sockfd){
 
 
 int main(){
-  char *ip = "IPADDR";
+  char *ip = "127.0.0.1";
   int port = PORT;
   int isBound;
 

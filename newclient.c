@@ -52,7 +52,7 @@ int main(){
     perror("[-]Error in socket");
     exit(1);
   }
-  printf("[+]Server socket created successfully.\n");
+  printf("[+]Client socket created successfully.\n");
 
   server_addr.sin_family = AF_INET; //assign IP and port to socket and declare protocol
   server_addr.sin_port = port;
@@ -75,7 +75,8 @@ int main(){
   fp = fopen("out.txt", "r");
   if (fp == NULL) {
     perror("[-]Error in reading file."); //check if file is blank
-  }
+    exit(1);
+}
 
   printf("[+]Closing the connection.\n");
   close(sockfd);
