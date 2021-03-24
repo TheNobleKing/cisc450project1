@@ -11,7 +11,7 @@ void writeFile(int sockfd){
 	int n;
 	FILE *newfile;
 	char *filename = "out.txt";
-	char buffer[SIZE]
+	char buffer[SIZE];
 
 	newfile = fopen(filename, "w"); //create file
 	while(n <= 0){
@@ -35,7 +35,6 @@ char clientChat(int sockfd)
         // and send that buffer to client
         write(sockfd, buff, sizeof(buff));
 	return buff;
-    }
 }
 
 
@@ -46,7 +45,7 @@ int main(){
 
   int sockfd;
   struct sockaddr_in server_addr;
-  FILE *fp;
+  FILE *fp; //file contents buffer
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0); //create socket w/ ID sockfd
   if(sockfd < 0) {
@@ -66,18 +65,17 @@ int main(){
   }
  printf("[+]Connected to Server.\n");
 
-  char filename = clientChat(sockfd);
-  printf("Requesting file: ")
+  char filename = clientChat(sockfd); //get filename
+  printf("Requesting file: ");
   printf(filename);
+  printf("\n");
 
-  fp = fopen(filename, "r");
+  writeFile(sockfd); //recieve file
+
+  fp = fopen("out.txt", "r");
   if (fp == NULL) {
-    perror("[-]Error in reading file.");
-    exit(1);
+    perror("[-]Error in reading file."); //check if file is blank
   }
-
-  send_file(fp, sockfd);
-  printf("[+]File data sent successfully.\n");
 
   printf("[+]Closing the connection.\n");
   close(sockfd);
