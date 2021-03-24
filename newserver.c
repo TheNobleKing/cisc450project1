@@ -22,15 +22,45 @@ void send_file(FILE *fp, int sockfd){
 }
 
 
+char getFileName(int sockfd){
+ char buff[SIZE];
+    int n;
+
+       bzero(buff, SIZE);
+
+        // read the message from client and copy it in buffer
+        read(sockfd, buff, sizeof(buff));
+
+        // print buffer which contains the client contents
+        printf("File named %s\t requested", buff);
+
+        return *buff;
+}
+
+
 int main(){
-  char *ip = "127.0.0.1";
-  int port = 8080;
-  int e;
+  char *ip = "IPADDR";
+  int port = PORT;
+  int isBound;
 
   int sockfd;
   struct sockaddr_in server_addr;
-  FILE *newfile;
-  char *filename; // --NEEDS CIN FILENAME
+  FILE *fp;
+  char *filename;
+
+
+  void send_file(FILE *fp, int sockfd){
+  int n;
+  char data[SIZE] = {0};
+
+  while(fgets(data, SIZE, fp) != NULL) {
+    if (send(sockfd, data, sizeof(data), 0) == -1) {
+      perror("[-]Error in sending file.");
+      exit(1);
+    }
+    bzero(data, SIZE);
+   }
+  }
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if(sockfd < 0) {
@@ -43,20 +73,29 @@ int main(){
   server_addr.sin_port = port;
   server_addr.sin_addr.s_addr = inet_addr(ip);
 
-  e = connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)); //attempt TCP connection
-  if(e == -1) {
-    perror("[-]Error in socket");
+  isBound = bind(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)); //attempt TCP connection
+  if(isBound == -1) {
+    perror("[-]Error in binding socket");
     exit(1);
   }
  printf("[+]Connected to Client.\n");
 
-  recv(4
+   if(listen(sockfd, 10) == 0){
+     printf("[+]Listening....\n");
+   } else {
+     perror("[-]Error in listening");
+    exit(1);
+   }
+
+
+  *filename = getFileName(sockfd);
 
   fp = fopen(filename, "r"); //buffer file contents
   if (fp == NULL) {
     perror("[-]Error in reading file.");
     exit(1);
   }
+
 
   send_file(fp, sockfd);
   printf("[+]File data sent successfully.\n");
